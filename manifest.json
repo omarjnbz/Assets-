@@ -1,8 +1,21 @@
 {
   "repo": "omarjnbz/Assets-",
   "branch": "main",
-  "generated": "2026-05-24T19:39:33.429Z",
-  "count": 0,
-  "totalSize": 0,
-  "assets": []
+  "generated": "2026-05-24T19:43:50.444Z",
+  "count": 1,
+  "totalSize": 6379616,
+  "assets": [
+    {
+      "name": "20260522_155752.jpg",
+      "path": "assets/images/20260522_155752.jpg",
+      "folder": "images",
+      "type": "image",
+      "ext": "jpg",
+      "size": 6379616,
+      "sizeHuman": "6.1 MB",
+      "modified": "2026-05-24T19:43:45.676Z",
+      "cdnUrl": "https://cdn.jsdelivr.net/gh/omarjnbz/Assets-@main/assets/images/20260522_155752.jpg",
+      "rawUrl": "https://raw.githubusercontent.com/omarjnbz/Assets-/main/assets/images/20260522_155752.jpg"
+    }
+  ]
 }
