@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>asset.archive</title>
+<meta name="description" content="A personal CDN gallery for images, video, and other static assets — served from jsDelivr." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0a0a;
+    --surface:   #141414;
+    --surface-2: #1c1c1c;
+    --border:    #262626;
+    --border-2:  #383838;
+    --text:      #f0ece2;
+    --dim:       #7a766b;
+    --dim-2:     #54514a;
+    --accent:    #c8f73c;
+    --accent-d:  #9bbf2d;
+    --danger:    #ff5b3a;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  /* subtle grain over the whole page */
+  body::before {
+    content:'';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(rgba(200,247,60,0.018) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  input { font: inherit; color: inherit; background: none; border: none; outline: none; }
+
+  /* ──────────── header ──────────── */
+  header {
+    position: relative; z-index: 2;
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .wordmark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 52px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+  .wordmark .dot { color: var(--accent); font-style: normal; }
+  .tagline {
+    color: var(--dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-top: 6px;
+  }
+  .stats {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .stat {
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .stat b { color: var(--text); font-weight: 500; margin-right: 6px; }
+
+  /* ──────────── toolbar ──────────── */
+  .toolbar {
+    position: sticky; top: 0; z-index: 3;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+  }
+  .search {
+    flex: 1; min-width: 260px;
+    display: flex; align-items: center;
+    border-bottom: 1px solid var(--border-2);
+    padding: 6px 0;
+    transition: border-color 0.15s;
+  }
+  .search:focus-within { border-color: var(--accent); }
+  .search-icon {
+    width: 14px; height: 14px; color: var(--dim); margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .search input {
+    flex: 1; font-size: 13px;
+  }
+  .search input::placeholder { color: var(--dim-2); }
+  .kbd {
+    font-size: 10px; color: var(--dim);
+    border: 1px solid var(--border-2);
+    padding: 2px 6px; letter-spacing: 0.05em;
+  }
+
+  .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    border: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .chip .num {
+    font-size: 10px; color: var(--dim-2); margin-left: 6px;
+  }
+  .chip.active .num { color: var(--accent-d); }
+
+  /* ──────────── grid ──────────── */
+  main { position: relative; z-index: 2; padding: 32px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .card {
+    background: var(--bg);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .card:hover { background: var(--surface); }
+  .card:hover .preview { opacity: 0.92; }
+  .card:hover .card-corner { color: var(--accent); }
+
+  .preview {
+    aspect-ratio: 4 / 3;
+    background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition: opacity 0.15s;
+  }
+  .preview img, .preview video {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .preview .icon {
+    color: var(--dim-2);
+    font-size: 28px;
+    font-family: var(--serif); font-style: italic;
+  }
+  .badge {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(10,10,10,0.75);
+    backdrop-filter: blur(4px);
+    color: var(--text);
+    font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 3px 6px;
+    border: 1px solid var(--border-2);
+  }
+  .badge.image { color: #9ec5ff; }
+  .badge.video { color: var(--accent); }
+  .badge.audio { color: #ffb47a; }
+  .badge.other { color: var(--dim); }
+
+  .card-meta {
+    padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; border-top: 1px solid var(--border);
+  }
+  .card-name {
+    font-size: 12px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1;
+  }
+  .card-size {
+    font-size: 10px; color: var(--dim);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .card-corner {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 14px; color: var(--dim-2);
+    font-family: var(--serif); font-style: italic;
+    transition: color 0.15s;
+  }
+
+  /* ──────────── empty / loading / error states ──────────── */
+  .state {
+    padding: 80px 24px;
+    text-align: center;
+    border: 1px solid var(--border);
+    color: var(--dim);
+  }
+  .state h2 {
+    font-family: var(--serif); font-style: italic;
+    color: var(--text); font-weight: 400;
+    font-size: 36px; letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .state pre {
+    color: var(--dim-2);
+    font-size: 11px;
+    margin: 24px auto;
+    text-align: left;
+    display: inline-block;
+    line-height: 1.7;
+  }
+  .state code {
+    background: var(--surface);
+    padding: 2px 6px;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .state p { max-width: 480px; margin: 8px auto; }
+
+  /* ──────────── modal ──────────── */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 10;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 32px;
+    animation: fade-in 0.18s ease-out;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .modal {
+    background: var(--bg);
+    border: 1px solid var(--border-2);
+    max-width: 1100px;
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    overflow: hidden;
+    animation: slide-up 0.22s ease-out;
+  }
+  @keyframes slide-up {
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @media (max-width: 800px) {
+    .modal { grid-template-columns: 1fr; max-height: 92vh; }
+  }
+
+  .modal-preview {
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    min-height: 240px;
+  }
+  .modal-preview img, .modal-preview video {
+    max-width: 100%; max-height: 80vh;
+    object-fit: contain; display: block;
+  }
+  .modal-preview .fallback {
+    color: var(--dim);
+    font-family: var(--serif); font-style: italic;
+    font-size: 22px;
+    padding: 60px;
+    text-align: center;
+  }
+
+  .modal-side {
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  @media (max-width: 800px) {
+    .modal-side { border-left: none; border-top: 1px solid var(--border); }
+  }
+
+  .modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px;
+  }
+  .modal-title {
+    font-size: 14px; font-weight: 500;
+    word-break: break-all;
+  }
+  .modal-close {
+    color: var(--dim);
+    font-size: 18px;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .modal-close:hover { color: var(--accent); }
+
+  .modal-meta {
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    font-size: 11px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-meta dt {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .modal-meta dd { color: var(--text); word-break: break-all; }
+
+  .url-section { padding: 18px 22px; flex: 1; }
+  .url-tabs {
+    display: flex; gap: 0;
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .url-tab {
+    flex: 1;
+    padding: 8px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--dim);
+    border-right: 1px solid var(--border);
+    transition: color 0.15s, background 0.15s;
+  }
+  .url-tab:last-child { border-right: none; }
+  .url-tab:hover { color: var(--text); }
+  .url-tab.active {
+    color: var(--bg);
+    background: var(--accent);
+    font-weight: 600;
+  }
+  .url-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px;
+    font-size: 11px;
+    word-break: break-all;
+    line-height: 1.6;
+    color: var(--text);
+    max-height: 140px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  .url-box .punc { color: var(--dim); }
+  .url-box .key  { color: #9ec5ff; }
+  .url-box .str  { color: var(--accent); }
+  .copy-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .copy-btn:hover { background: #d4ff52; }
+  .copy-btn:active { transform: scale(0.98); }
+  .copy-btn.copied { background: var(--text); }
+
+  /* ──────────── toast ──────────── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 18px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    z-index: 20;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ──────────── footer ──────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    color: var(--dim);
+    font-size: 11px;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  footer a { color: var(--text); border-bottom: 1px solid var(--border-2); padding-bottom: 1px; }
+  footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--dim-2); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1 class="wordmark">asset<span class="dot">.</span>archive</h1>
+    <div class="tagline" id="tagline">— a personal CDN, served from jsdelivr</div>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="toolbar">
+  <label class="search">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="7"/>
+      <path d="M21 21l-4.3-4.3"/>
+    </svg>
+    <input id="search" type="search" placeholder="search filenames…" autocomplete="off" />
+    <span class="kbd">/</span>
+  </label>
+  <div class="chips" id="chips"></div>
+</div>
+
+<main id="main">
+  <div class="state" id="loading">
+    <h2>loading manifest…</h2>
+    <p>fetching asset index from the repository.</p>
+  </div>
+</main>
+
+<footer>
+  <div>asset.archive — built static · indexed via github actions · cdn via jsdelivr</div>
+  <div id="repo-link"></div>
+</footer>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal" id="modal-inner"></div>
+</div>
+
+<div class="toast" id="toast">copied</div>
+
+<script>
+  const $ = (sel) => document.querySelector(sel);
+  const main = $('#main');
+  const state = {
+    assets: [],
+    filter: 'all',
+    query: '',
+    manifest: null,
+  };
+
+  const TYPE_ORDER = ['all', 'image', 'video', 'audio', 'other'];
+  const TYPE_LABELS = {
+    all: 'All', image: 'Images', video: 'Video', audio: 'Audio', other: 'Other',
+  };
+
+  function escapeHTML(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function fmtDate(iso) {
+    try {
+      return new Date(iso).toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    } catch { return iso; }
+  }
+
+  function humanSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+  }
+
+  async function loadManifest() {
+    try {
+      const r = await fetch('manifest.json?t=' + Date.now());
+      if (!r.ok) throw new Error('not-found');
+      const m = await r.json();
+      state.manifest = m;
+      state.assets = m.assets || [];
+      renderAll();
+    } catch (err) {
+      renderError(err.message === 'not-found');
+    }
+  }
+
+  function renderError(notFound) {
+    main.innerHTML = `
+      <div class="state">
+        <h2>${notFound ? 'no manifest yet' : 'failed to load manifest'}</h2>
+        <p>${notFound
+          ? 'push something to <code>assets/</code> on the main branch — the github action will generate <code>manifest.json</code>.'
+          : 'something went wrong fetching <code>manifest.json</code>.'}</p>
+        <p style="margin-top:24px;">you can also run it locally:</p>
+        <pre>$ node scripts/build-manifest.js
+$ git add manifest.json && git push</pre>
+      </div>`;
+  }
+
+  function renderAll() {
+    renderStats();
+    renderChips();
+    renderRepoLink();
+    renderGrid();
+  }
+
+  function renderStats() {
+    const { count = 0, totalSize = 0, generated } = state.manifest || {};
+    $('#stats').innerHTML = `
+      <div class="stat"><b>${count}</b> files</div>
+      <div class="stat"><b>${humanSize(totalSize)}</b> total</div>
+      <div class="stat"><b>indexed</b> ${generated ? fmtDate(generated) : '—'}</div>
+    `;
+    if (count === 0) {
+      $('#tagline').textContent = '— empty for now. drop files into assets/ and push.';
+    }
+  }
+
+  function renderRepoLink() {
+    const m = state.manifest;
+    if (!m || !m.repo) return;
+    $('#repo-link').innerHTML = `<a href="https://github.com/${escapeHTML(m.repo)}" target="_blank" rel="noopener">github.com/${escapeHTML(m.repo)}</a>`;
+  }
+
+  function renderChips() {
+    const counts = { all: state.assets.length };
+    for (const a of state.assets) counts[a.type] = (counts[a.type] || 0) + 1;
+    $('#chips').innerHTML = TYPE_ORDER.map((t) => {
+      const n = counts[t] || 0;
+      if (t !== 'all' && n === 0) return '';
+      return `<button class="chip ${state.filter === t ? 'active' : ''}" data-filter="${t}">
+        ${TYPE_LABELS[t]}<span class="num">${n}</span>
+      </button>`;
+    }).join('');
+    $('#chips').querySelectorAll('.chip').forEach((b) => {
+      b.onclick = () => { state.filter = b.dataset.filter; renderChips(); renderGrid(); };
+    });
+  }
+
+  function filteredAssets() {
+    const q = state.query.trim().toLowerCase();
+    return state.assets.filter((a) => {
+      if (state.filter !== 'all' && a.type !== state.filter) return false;
+      if (q && !a.name.toLowerCase().includes(q) && !a.path.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  function renderGrid() {
+    if (!state.assets.length) {
+      main.innerHTML = `
+        <div class="state">
+          <h2>no assets yet</h2>
+          <p>drop files into the <code>assets/</code> folder of your repo and push to main.</p>
+          <pre>assets/
+├── images/
+│   └── your-photo.jpg
+├── videos/
+│   └── your-clip.mp4
+└── other/</pre>
+          <p>the workflow rebuilds <code>manifest.json</code> automatically.</p>
+        </div>`;
+      return;
+    }
+    const items = filteredAssets();
+    if (!items.length) {
+      main.innerHTML = `
+        <div class="state">
+          <h2>no matches</h2>
+          <p>nothing matches that filter or search.</p>
+        </div>`;
+      return;
+    }
+    main.innerHTML = `<div class="grid" id="grid"></div>`;
+    const grid = $('#grid');
+    grid.innerHTML = items.map((a, i) => cardHTML(a, i)).join('');
+    grid.querySelectorAll('.card').forEach((el) => {
+      el.onclick = () => openModal(state.assets.find((x) => x.path === el.dataset.path));
+    });
+  }
+
+  function cardHTML(a, idx) {
+    let preview;
+    if (a.type === 'image') {
+      preview = `<img loading="lazy" src="${escapeHTML(a.cdnUrl)}" alt="${escapeHTML(a.name)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'icon',textContent:'broken'}))" />`;
+    } else if (a.type === 'video') {
+      preview = `<video preload="metadata" muted playsinline src="${escapeHTML(a.cdnUrl)}#t=0.1"></video>`;
+    } else if (a.type === 'audio') {
+      preview = `<div class="icon">♫</div>`;
+    } else {
+      preview = `<div class="icon">${escapeHTML(a.ext || '?')}</div>`;
+    }
+    return `
+      <div class="card" data-path="${escapeHTML(a.path)}">
+        <div class="preview">
+          <span class="badge ${a.type}">${escapeHTML(a.type)}</span>
+          ${preview}
+        </div>
+        <span class="card-corner">↗</span>
+        <div class="card-meta">
+          <span class="card-name">${escapeHTML(a.name)}</span>
+          <span class="card-size">${escapeHTML(a.sizeHuman)}</span>
+        </div>
+      </div>`;
+  }
+
+  /* ──────── modal ──────── */
+  let activeAsset = null;
+  let activeMode = 'cdn';
+
+  const URL_MODES = ['cdn', 'markdown', 'html', 'raw'];
+  const URL_MODE_LABELS = { cdn: 'Direct', markdown: 'Markdown', html: 'HTML', raw: 'Raw' };
+
+  function snippetFor(a, mode) {
+    if (mode === 'cdn') return a.cdnUrl;
+    if (mode === 'raw') return a.rawUrl;
+    if (mode === 'markdown') {
+      if (a.type === 'image') return `![${a.name}](${a.cdnUrl})`;
+      return `[${a.name}](${a.cdnUrl})`;
+    }
+    if (mode === 'html') {
+      if (a.type === 'image') return `<img src="${a.cdnUrl}" alt="${a.name}" />`;
+      if (a.type === 'video') return `<video src="${a.cdnUrl}" controls playsinline></video>`;
+      if (a.type === 'audio') return `<audio src="${a.cdnUrl}" controls></audio>`;
+      return `<a href="${a.cdnUrl}">${a.name}</a>`;
+    }
+    return a.cdnUrl;
+  }
+
+  function openModal(a) {
+    if (!a) return;
+    activeAsset = a;
+    activeMode = 'cdn';
+    let preview;
+    if (a.type === 'image') {
+      preview = `<img src="${escapeHTML(a.cdnUrl)}" alt="${escapeHTML(a.name)}" />`;
+    } else if (a.type === 'video') {
+      preview = `<video src="${escapeHTML(a.cdnUrl)}" controls playsinline preload="metadata"></video>`;
+    } else if (a.type === 'audio') {
+      preview = `<audio src="${escapeHTML(a.cdnUrl)}" controls style="width:80%;"></audio>`;
+    } else {
+      preview = `<div class="fallback">.${escapeHTML(a.ext)} — no inline preview</div>`;
+    }
+
+    $('#modal-inner').innerHTML = `
+      <div class="modal-preview">${preview}</div>
+      <div class="modal-side">
+        <div class="modal-header">
+          <div class="modal-title">${escapeHTML(a.name)}</div>
+          <button class="modal-close" id="modal-close" aria-label="close">×</button>
+        </div>
+        <dl class="modal-meta">
+          <dt>type</dt>     <dd>${escapeHTML(a.type)} / ${escapeHTML(a.ext)}</dd>
+          <dt>size</dt>     <dd>${escapeHTML(a.sizeHuman)}</dd>
+          <dt>path</dt>     <dd>${escapeHTML(a.path)}</dd>
+          <dt>added</dt>    <dd>${escapeHTML(fmtDate(a.modified))}</dd>
+        </dl>
+        <div class="url-section">
+          <div class="url-tabs" id="url-tabs">
+            ${URL_MODES.map((m) => `
+              <button class="url-tab ${m === activeMode ? 'active' : ''}" data-mode="${m}">${URL_MODE_LABELS[m]}</button>
+            `).join('')}
+          </div>
+          <div class="url-box" id="url-box">${escapeHTML(snippetFor(a, activeMode))}</div>
+          <button class="copy-btn" id="copy-btn">copy to clipboard</button>
+        </div>
+      </div>
+    `;
+    $('#modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    $('#modal-close').onclick = closeModal;
+    $('#copy-btn').onclick = () => copy(snippetFor(activeAsset, activeMode), $('#copy-btn'));
+    $('#url-tabs').querySelectorAll('.url-tab').forEach((t) => {
+      t.onclick = () => {
+        activeMode = t.dataset.mode;
+        $('#url-tabs').querySelectorAll('.url-tab').forEach((x) => x.classList.toggle('active', x === t));
+        $('#url-box').textContent = snippetFor(activeAsset, activeMode);
+      };
+    });
+  }
+
+  function closeModal() {
+    $('#modal').classList.remove('open');
+    $('#modal-inner').innerHTML = '';
+    document.body.style.overflow = '';
+    activeAsset = null;
+  }
+
+  $('#modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  function copy(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('copied');
+      if (btn) {
+        const orig = btn.textContent;
+        btn.classList.add('copied');
+        btn.textContent = '✓ copied';
+        setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1400);
+      }
+    }).catch(() => showToast('copy failed'));
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  /* ──────── keyboard ──────── */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== $('#search')) {
+      e.preventDefault(); $('#search').focus();
+    } else if (e.key === 'Escape') {
+      if ($('#modal').classList.contains('open')) closeModal();
+      else { $('#search').blur(); $('#search').value = ''; state.query = ''; renderGrid(); }
+    }
+  });
+
+  $('#search').addEventListener('input', (e) => {
+    state.query = e.target.value;
+    renderGrid();
+  });
+
+  loadManifest();
+</script>
+</body>
+</html>
