@@ -296,6 +296,58 @@
     transition: color 0.15s;
   }
 
+  /* ──────────── collections ──────────── */
+  .badge.collection {
+    background: rgba(200, 247, 60, 0.14);
+    color: var(--accent);
+    border-color: rgba(200, 247, 60, 0.32);
+  }
+  .thumb-grid {
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    background: var(--surface);
+  }
+  .thumb-grid img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .thumb-grid .thumb-empty {
+    width: 100%; height: 100%;
+    background: var(--surface-2);
+    color: var(--dim-2);
+    font-size: 10px;
+    font-family: var(--serif); font-style: italic;
+    display: flex; align-items: center; justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .collection-card:hover .thumb-grid img { opacity: 0.94; }
+
+  .crumb {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--dim);
+    flex-wrap: wrap;
+  }
+  .crumb a {
+    color: var(--dim);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 0.15s, border-color 0.15s;
+    cursor: pointer;
+  }
+  .crumb a:hover { color: var(--accent); border-color: var(--accent); }
+  .crumb .sep { color: var(--dim-2); }
+  .crumb .current { color: var(--text); }
+  .crumb .meta { color: var(--dim-2); margin-left: auto; }
+
   /* ──────────── empty / loading / error states ──────────── */
   .state {
     padding: 80px 24px;
@@ -576,12 +628,46 @@
     filter: 'all',
     query: '',
     manifest: null,
+    collection: null, // null = root view; otherwise the collection name
   };
 
   const TYPE_ORDER = ['all', 'image', 'video', 'audio', 'other'];
   const TYPE_LABELS = {
     all: 'All', image: 'Images', video: 'Video', audio: 'Audio', other: 'Other',
   };
+  const TYPE_DIRS = new Set(['images', 'videos', 'other']);
+
+  /* Collection of an asset, or null if it's a loose top-level file.
+     Examples:
+       folder 'images'           → null (loose image)
+       folder 'images/vacation'  → 'vacation'
+       folder 'vacation'         → 'vacation'  (user dropped subfolder at assets/ root)
+       folder 'vacation/2026'    → 'vacation'  (only one level deep is grouped) */
+  function collectionOf(a) {
+    if (!a.folder || a.folder === 'root') return null;
+    const parts = a.folder.split('/');
+    if (TYPE_DIRS.has(parts[0])) return parts.length > 1 ? parts[1] : null;
+    return parts[0];
+  }
+
+  function currentAssetList() {
+    if (state.collection === null) return state.assets;
+    return state.assets.filter((a) => collectionOf(a) === state.collection);
+  }
+
+  function enterCollection(name) {
+    state.collection = name;
+    state.query = '';
+    $('#search').value = '';
+    renderAll();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateTitle() {
+    document.title = state.collection
+      ? `${state.collection} · asset.archive`
+      : 'asset.archive';
+  }
 
   function escapeHTML(s) {
     return String(s).replace(/[&<>"']/g, (c) => ({
@@ -633,6 +719,7 @@ $ git add manifest.json && git push</pre>
   }
 
   function renderAll() {
+    updateTitle();
     renderStats();
     renderChips();
     renderRepoLink();
@@ -648,9 +735,16 @@ $ git add manifest.json && git push</pre>
     }
     $('#add-btn').style.display = '';
     const base = `https://github.com/${m.repo}/upload/${m.branch}/assets`;
+    const suffix = state.collection ? `/${encodeURIComponent(state.collection)}` : '';
     document.querySelectorAll('#add-popover a[data-folder]').forEach((a) => {
-      a.href = `${base}/${a.dataset.folder}`;
+      a.href = `${base}/${a.dataset.folder}${suffix}`;
     });
+    const hint = document.querySelector('#add-popover .add-hint');
+    if (hint) {
+      hint.textContent = state.collection
+        ? `uploading into "${state.collection}" · rebuilds manifest`
+        : 'drag-drop on github · auto-commits to main · rebuilds manifest';
+    }
   }
 
   function toggleAddMenu(force) {
@@ -688,8 +782,9 @@ $ git add manifest.json && git push</pre>
   }
 
   function renderChips() {
-    const counts = { all: state.assets.length };
-    for (const a of state.assets) counts[a.type] = (counts[a.type] || 0) + 1;
+    const list = currentAssetList();
+    const counts = { all: list.length };
+    for (const a of list) counts[a.type] = (counts[a.type] || 0) + 1;
     $('#chips').innerHTML = TYPE_ORDER.map((t) => {
       const n = counts[t] || 0;
       if (t !== 'all' && n === 0) return '';
@@ -702,13 +797,66 @@ $ git add manifest.json && git push</pre>
     });
   }
 
-  function filteredAssets() {
+  /* Returns the items to render in the current view:
+       - At root  → [collection tiles, ...loose files]
+       - In a collection → [files in that collection] */
+  function viewItems() {
+    if (state.collection !== null) {
+      return state.assets
+        .filter((a) => collectionOf(a) === state.collection)
+        .map((asset) => ({ kind: 'file', asset }));
+    }
+    const map = new Map();
+    const loose = [];
+    for (const a of state.assets) {
+      const c = collectionOf(a);
+      if (c) {
+        if (!map.has(c)) map.set(c, []);
+        map.get(c).push(a);
+      } else {
+        loose.push(a);
+      }
+    }
+    const items = [];
+    for (const name of [...map.keys()].sort()) {
+      items.push({ kind: 'collection', name, items: map.get(name) });
+    }
+    for (const f of loose) items.push({ kind: 'file', asset: f });
+    return items;
+  }
+
+  function applyFilters(items) {
     const q = state.query.trim().toLowerCase();
-    return state.assets.filter((a) => {
+    return items.filter((it) => {
+      if (it.kind === 'collection') {
+        if (state.filter !== 'all' && !it.items.some((a) => a.type === state.filter)) return false;
+        if (q) {
+          const nameMatch = it.name.toLowerCase().includes(q);
+          const fileMatch = it.items.some((a) =>
+            a.name.toLowerCase().includes(q) || a.path.toLowerCase().includes(q)
+          );
+          if (!nameMatch && !fileMatch) return false;
+        }
+        return true;
+      }
+      const a = it.asset;
       if (state.filter !== 'all' && a.type !== state.filter) return false;
       if (q && !a.name.toLowerCase().includes(q) && !a.path.toLowerCase().includes(q)) return false;
       return true;
     });
+  }
+
+  function crumbHTML() {
+    if (state.collection === null) return '';
+    const list = currentAssetList();
+    const total = list.reduce((s, a) => s + a.size, 0);
+    return `
+      <nav class="crumb">
+        <a data-back>← all</a>
+        <span class="sep">/</span>
+        <span class="current">${escapeHTML(state.collection)}</span>
+        <span class="meta">${list.length} items · ${escapeHTML(humanSize(total))}</span>
+      </nav>`;
   }
 
   function renderGrid() {
@@ -724,25 +872,38 @@ $ git add manifest.json && git push</pre>
 ├── videos/
 │   └── your-clip.mp4
 └── other/</pre>
-          <p>either way, the workflow rebuilds <code>manifest.json</code> automatically.</p>
+          <p style="margin-top:16px;">tip: drop a subfolder (e.g. <code>images/vacation/</code>) to start a collection — it shows as one tile that opens.</p>
         </div>`;
       return;
     }
-    const items = filteredAssets();
+    const items = applyFilters(viewItems());
     if (!items.length) {
-      main.innerHTML = `
+      main.innerHTML = `${crumbHTML()}
         <div class="state">
           <h2>no matches</h2>
           <p>nothing matches that filter or search.</p>
         </div>`;
+      wireCrumb();
       return;
     }
-    main.innerHTML = `<div class="grid" id="grid"></div>`;
+    main.innerHTML = `${crumbHTML()}<div class="grid" id="grid"></div>`;
+    wireCrumb();
     const grid = $('#grid');
-    grid.innerHTML = items.map((a, i) => cardHTML(a, i)).join('');
+    grid.innerHTML = items.map((it) =>
+      it.kind === 'collection' ? collectionCardHTML(it.name, it.items) : cardHTML(it.asset)
+    ).join('');
     grid.querySelectorAll('.card').forEach((el) => {
-      el.onclick = () => openModal(state.assets.find((x) => x.path === el.dataset.path));
+      if (el.dataset.collection) {
+        el.onclick = () => enterCollection(el.dataset.collection);
+      } else {
+        el.onclick = () => openModal(state.assets.find((x) => x.path === el.dataset.path));
+      }
     });
+  }
+
+  function wireCrumb() {
+    const back = document.querySelector('main [data-back]');
+    if (back) back.onclick = (e) => { e.preventDefault(); enterCollection(null); };
   }
 
   function cardHTML(a, idx) {
@@ -766,6 +927,33 @@ $ git add manifest.json && git push</pre>
         <div class="card-meta">
           <span class="card-name">${escapeHTML(a.name)}</span>
           <span class="card-size">${escapeHTML(a.sizeHuman)}</span>
+        </div>
+      </div>`;
+  }
+
+  function collectionCardHTML(name, items) {
+    const totalSize = items.reduce((s, a) => s + a.size, 0);
+    const images = items.filter((a) => a.type === 'image').slice(0, 4);
+    const others = items.filter((a) => a.type !== 'image').slice(0, 4 - images.length);
+    const covers = [...images, ...others].slice(0, 4);
+    while (covers.length < 4) covers.push(null);
+    const thumbs = covers.map((a) => {
+      if (!a) return '<div class="thumb-empty"></div>';
+      if (a.type === 'image') {
+        return `<img loading="lazy" src="${escapeHTML(a.cdnUrl)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'broken'}))" />`;
+      }
+      return `<div class="thumb-empty">${escapeHTML(a.ext || a.type)}</div>`;
+    }).join('');
+    return `
+      <div class="card collection-card" data-collection="${escapeHTML(name)}">
+        <div class="preview">
+          <span class="badge collection">collection · ${items.length}</span>
+          <div class="thumb-grid">${thumbs}</div>
+        </div>
+        <span class="card-corner">↗</span>
+        <div class="card-meta">
+          <span class="card-name">${escapeHTML(name)}</span>
+          <span class="card-size">${escapeHTML(humanSize(totalSize))}</span>
         </div>
       </div>`;
   }
@@ -885,7 +1073,9 @@ $ git add manifest.json && git push</pre>
     } else if (e.key === 'Escape') {
       if ($('#modal').classList.contains('open')) closeModal();
       else if ($('#add-popover').classList.contains('open')) toggleAddMenu(false);
-      else { $('#search').blur(); $('#search').value = ''; state.query = ''; renderGrid(); }
+      else if (state.query) { $('#search').blur(); $('#search').value = ''; state.query = ''; renderGrid(); }
+      else if (state.collection !== null) enterCollection(null);
+      else $('#search').blur();
     }
   });
 
