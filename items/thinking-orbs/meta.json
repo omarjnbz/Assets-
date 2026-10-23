@@ -1,0 +1,11 @@
+{
+  "title": "Thinking Orbs",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "added": "2026-10-09",
+  "description": "Nine loading states for AI interfaces. Orbs that think while you wait. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "loader",
+    "ai",
+    "effect"
+  ]
+}

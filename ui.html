@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex,nofollow">
+<title>Components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Martian+Mono:wght@400&display=swap">
+<style>
+:root{--ink:#080807;--card:#111110;--line:#26241f;--sand:#e8e8e3;--dim:#8b857c;--ghost:#3b3833;--olive:#aaaa8e;--f:"Archivo",system-ui,sans-serif;--m:"Martian Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--ink);color:var(--sand);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased;display:grid;grid-template-columns:300px 1fr}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+.mono{font-family:var(--m);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase}
+aside{border-right:1px solid var(--line);height:100vh;display:flex;flex-direction:column;position:sticky;top:0}
+.top{padding:1.4rem 1.2rem 1rem}
+.top h1{font-size:1.3rem;font-weight:900;letter-spacing:-.03em}
+.top .mono{color:var(--olive);display:block;margin-bottom:.4rem}
+#q{width:100%;margin-top:1rem;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.5rem .8rem;color:var(--sand);font:inherit;font-size:.85rem;outline:none}
+#q:focus{border-color:var(--olive)}
+#tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.8rem}
+.chip{border:1px solid var(--line);border-radius:999px;padding:.15rem .6rem;color:var(--dim)}
+.chip[aria-pressed=true]{background:var(--sand);color:var(--ink);border-color:var(--sand)}
+#list{overflow:auto;flex:1;padding:0 .6rem 1rem}
+.row{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;padding:.55rem .6rem;border-radius:8px;color:var(--dim);font-size:.9rem}
+.row:hover{color:var(--sand)}
+.row[aria-current=true]{background:var(--card);color:var(--sand)}
+.row .mono{margin-left:auto;color:var(--ghost)}
+main{padding:clamp(1.2rem,3vw,2.6rem);min-width:0}
+main h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;letter-spacing:-.04em;line-height:1.05}
+.meta{color:var(--olive);margin:.7rem 0 .8rem}
+.desc{color:var(--dim);max-width:70ch}
+details{margin-top:.8rem;color:var(--dim);font-size:.85rem;max-width:80ch}
+details summary{cursor:pointer;color:var(--olive)}
+details pre{white-space:pre-wrap;font:400 .75rem/1.6 var(--m);margin-top:.6rem}
+.tabs{display:flex;gap:1.2rem;margin:1.6rem 0 1rem;border-bottom:1px solid var(--line)}
+.tab{padding:.5rem 0;color:var(--dim);border-bottom:1px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--sand);border-color:var(--sand)}
+.sp{flex:1}
+.stage{position:relative;height:min(72vh,720px);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);display:grid;place-items:center}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.go{border:1px solid var(--line);border-radius:999px;padding:.6rem 1.4rem}
+.go:hover{border-color:var(--olive)}
+.files{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem}
+.files button{border:1px solid var(--line);border-radius:6px;padding:.25rem .7rem;color:var(--dim)}
+.files button[aria-pressed=true]{color:var(--sand);border-color:var(--olive)}
+.files .copy{margin-left:auto;color:var(--sand)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem;overflow:auto;max-height:72vh;font:400 .74rem/1.6 var(--m);color:#cfcbc0;tab-size:2}
+[hidden]{display:none!important}
+.none{color:var(--dim);padding:1rem .6rem}
+.modes{display:flex;gap:.3rem;margin-top:1rem;padding:.2rem;border:1px solid var(--line);border-radius:10px}
+.modes button{flex:1;padding:.35rem 0;border-radius:7px;color:var(--dim)}
+.modes button[aria-pressed=true]{background:var(--sand);color:var(--ink)}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem;margin-top:1.4rem}
+.lk{display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.1rem;background:var(--card);border:1px solid var(--line);border-radius:12px;color:inherit;text-decoration:none}
+.lk:hover{border-color:var(--olive)}
+.lk b{font-size:1rem;letter-spacing:-.01em}
+.lk .mono{color:var(--olive)}
+.lk p{color:var(--dim);font-size:.85rem}
+.assets-frame{width:100%;height:calc(100vh - 3.4rem);border:1px solid var(--line);border-radius:12px;background:#000}
+.lk .cat{color:var(--ghost);margin-top:auto;padding-top:.4rem}
+@media(max-width:800px){body{display:block}aside{position:static;height:auto;max-height:44vh}}
+</style>
+</head>
+<body>
+<aside>
+  <div class="top">
+    <span class="mono">Omar · Library</span>
+    <h1><span id="ttl">Components</span> <span id="n" class="mono" style="color:var(--ghost)"></span></h1>
+    <div class="modes"><button id="m-c" aria-pressed="true">Components</button><button id="m-l" aria-pressed="false">Links</button><button id="m-a" aria-pressed="false">Assets</button></div>
+    <input id="q" type="search" placeholder="Search name, tag, language" aria-label="Search" autocomplete="off">
+    <div id="tags"></div>
+  </div>
+  <div id="list"></div>
+</aside>
+<main id="main"></main>
+
+<script id="data" type="application/json">__DATA__</script>
+<script id="links" type="application/json">__LINKS__</script>
+<script>
+(function(){
+  var L = JSON.parse(document.getElementById("data").textContent);
+  var $ = function(s){return document.querySelector(s)};
+  var tag = "", cur = null;
+  function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c; if(x != null) e.textContent = x; return e; }
+
+  // chips: every tag in use, plus language
+  var all = {};
+  L.forEach(function(c){ all[c.kind] = 1; }); // language chips only; tags stay searchable (search box) and shown per item
+  Object.keys(all).sort().forEach(function(t){
+    var b = el("button","chip mono",t); b.setAttribute("aria-pressed","false");
+    b.onclick = function(){ tag = tag === t ? "" : t; [].forEach.call($("#tags").children, function(x){ x.setAttribute("aria-pressed", String(x.textContent === tag)); }); list(); };
+    $("#tags").appendChild(b);
+  });
+
+  function match(c){
+    var q = $("#q").value.toLowerCase();
+    if(tag && c.kind !== tag && c.tags.indexOf(tag) < 0) return false;
+    return !q || (c.title+" "+c.kind+" "+c.tags.join(" ")+" "+c.description+" "+c.source+" "+c.deps.join(" ")).toLowerCase().indexOf(q) >= 0;
+  }
+  function listC(){
+    var box = $("#list"), k = 0; box.innerHTML = "";
+    L.forEach(function(c){
+      if(!match(c)) return; k++;
+      var r = el("button","row"); r.appendChild(el("span",null,c.title)); r.appendChild(el("span","mono",c.kind));
+      r.setAttribute("aria-current", String(cur && cur.slug === c.slug)); r.onclick = function(){ show(c); };
+      box.appendChild(r);
+    });
+    if(!k) box.appendChild(el("p","none","Nothing matches."));
+    $("#n").textContent = L.length;
+  }
+
+  // ---- links tab ----
+  var K = JSON.parse(document.getElementById("links").textContent), mode = "c", kcat = "";
+  function host(u){ return u.replace(/^https?:\/\/(www\.)?/, ""); }
+  function kmatch(k){
+    var q = $("#q").value.toLowerCase();
+    if(kcat && k.cat !== kcat) return false;
+    return !q || (k.title+" "+host(k.url)+" "+k.note+" "+k.cat).toLowerCase().indexOf(q) >= 0;
+  }
+  function listL(){
+    var box = $("#list"), cats = {}; box.innerHTML = "";
+    K.forEach(function(k){ cats[k.cat] = (cats[k.cat]||0)+1; });
+    function row(name, label, n){ var r = el("button","row"); r.appendChild(el("span",null,label)); r.appendChild(el("span","mono",String(n)));
+      r.setAttribute("aria-current", String(kcat === name)); r.onclick = function(){ kcat = name; list(); showL(); }; box.appendChild(r); }
+    row("", "All", K.length);
+    Object.keys(cats).sort().forEach(function(c){ row(c, c, cats[c]); });
+    $("#n").textContent = K.length;
+  }
+  function showL(){
+    var m = $("#main"); m.innerHTML = "";
+    m.appendChild(el("h2",null,kcat || "All links"));
+    var shown = K.filter(kmatch);
+    m.appendChild(el("p","meta mono", shown.length + " saved  ·  add more with: npm run link -- <url>"));
+    var g = el("div","lgrid");
+    shown.forEach(function(k){
+      var a = el("a","lk"); a.href = k.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.appendChild(el("b",null,k.title)); a.appendChild(el("span","mono",host(k.url)));
+      if(k.note) a.appendChild(el("p",null,k.note)); a.appendChild(el("span","cat mono",k.cat));
+      g.appendChild(a);
+    });
+    if(!shown.length) g.appendChild(el("p","none","Nothing matches."));
+    m.appendChild(g); window.scrollTo(0,0);
+  }
+  function list(){ if(mode === "l") listL(); else if(mode === "a") return; else listC(); }
+  function setMode(x){
+    mode = x; ["c","l","a"].forEach(function(k){ $("#m-"+k).setAttribute("aria-pressed", String(x===k)); });
+    $("#ttl").textContent = x === "l" ? "Links" : x === "a" ? "Assets" : "Components"; $("#tags").hidden = x !== "c"; $("#q").hidden = x === "a";
+    $("#q").placeholder = x === "l" ? "Search links, notes, category" : "Search name, tag, language";
+    $("#q").value = ""; list();
+    if(x === "l"){ location.hash = "links"; showL(); }
+    else if(x === "a"){ location.hash = "assets"; $("#list").innerHTML = ""; $("#n").textContent = "";
+      var m = $("#main"); m.innerHTML = ""; var f = el("iframe","assets-frame"); f.src = "gallery.html"; f.title = "Assets"; m.appendChild(f); }
+    else show(cur || L[0]);
+  }
+  $("#m-c").onclick = function(){ setMode("c"); }; $("#m-l").onclick = function(){ setMode("l"); }; $("#m-a").onclick = function(){ setMode("a"); };
+  $("#q").oninput = function(){ list(); if(mode === "l") showL(); };
+
+  function show(c){
+    cur = c; location.hash = c.slug; list();
+    var m = $("#main"); m.innerHTML = "";
+    m.appendChild(el("h2",null,c.title));
+    var bits = [c.kind]; if(c.source) bits.push(c.source); if(c.deps.length) bits.push(c.deps.join(", ")); if(c.tailwind) bits.push("tailwind"); if(c.tags.length) bits.push("# "+c.tags.join(" # "));
+    m.appendChild(el("p","meta mono",bits.join("  ·  ")));
+    if(c.description) m.appendChild(el("p","desc",c.description));
+    if(c.notes){ var d = el("details"); d.appendChild(el("summary","mono","Notes")); d.appendChild(el("pre",null,c.notes)); m.appendChild(d); }
+
+    var tabs = el("div","tabs"), tp = el("button","tab mono","Preview"), tc = el("button","tab mono","Code");
+    tabs.appendChild(tp); tabs.appendChild(tc); m.appendChild(tabs);
+
+    var stage = el("div","stage");
+    if(c.preview){ var go = el("button","go mono","Load preview"); go.onclick = function(){ var f = document.createElement("iframe"); f.srcdoc = c.preview; f.title = c.title; stage.innerHTML = ""; stage.appendChild(f); }; stage.appendChild(go); }
+    else stage.appendChild(el("span","mono","Code only. Needs its project to run"));
+    m.appendChild(stage);
+
+    var box = el("div"), files = el("div","files"), pre = el("pre","code"), f0 = c.files[0];
+    function pick(f, b){ f0 = f; pre.textContent = f.text; [].forEach.call(files.querySelectorAll("button:not(.copy)"), function(x){ x.setAttribute("aria-pressed", String(x === b)); }); }
+    c.files.forEach(function(f,i){ var b = el("button","mono",f.name); b.setAttribute("aria-pressed", String(i===0)); b.onclick = function(){ pick(f,b); }; files.appendChild(b); });
+    var cp = el("button","copy mono","Copy"); cp.onclick = function(){ navigator.clipboard.writeText(f0.text).then(function(){ cp.textContent = "Copied"; setTimeout(function(){ cp.textContent = "Copy"; },1200); }); };
+    files.appendChild(cp); pre.textContent = f0 ? f0.text : ""; box.appendChild(files); box.appendChild(pre); m.appendChild(box);
+
+    function tab(code){ tp.setAttribute("aria-selected", String(!code)); tc.setAttribute("aria-selected", String(code)); stage.hidden = code; box.hidden = !code; }
+    tp.onclick = function(){ tab(false); }; tc.onclick = function(){ tab(true); };
+    tab(!c.preview);
+    m.scrollTop = 0; window.scrollTo(0,0);
+  }
+
+  var h = decodeURIComponent(location.hash.slice(1));
+  if(h === "links") setMode("l"); else if(h === "assets") setMode("a"); else { list(); show(L.filter(function(c){return c.slug === h})[0] || L[0]); }
+})();
+</script>
+</body>
+</html>

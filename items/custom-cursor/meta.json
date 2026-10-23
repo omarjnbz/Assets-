@@ -1,0 +1,10 @@
+{
+  "title": "Custom Cursor",
+  "source": "Omar",
+  "description": "GSAP quickTo cursor that scales on interactive elements. Imports ../lib/motion (prefersReducedMotion).",
+  "tags": [
+    "cursor",
+    "gsap"
+  ],
+  "added": "2026-10-09"
+}

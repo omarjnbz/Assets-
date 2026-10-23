@@ -1,0 +1,11 @@
+{
+  "title": "Hero Canvas (WebGL)",
+  "source": "Omar",
+  "description": "WebGL fragment-shader hero: cover-fit image with a scroll-driven light band and relighting glow. Amaterasu hero redesign.",
+  "tags": [
+    "hero",
+    "webgl",
+    "shader"
+  ],
+  "added": "2026-10-09"
+}

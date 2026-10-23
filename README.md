@@ -1,4 +1,49 @@
-# asset.archive
+# Omar's library: components, links, assets (ONE repo)
+
+Components, saved links and the image/video CDN in one repo. **One page: `index.html`** (tabs: Components, Links, Assets) (open it in a browser, no server needed).
+Everything lives in `items/<name>/`. A folder is a component, its files are the code.
+
+## Use
+```bash
+npm run open      # rebuild index.html and open it
+```
+
+## Add a component (any language)
+```bash
+npm run add -- my-card path/to/MyCard.tsx path/to/demo.tsx --title "My Card" --tags card,hover
+npm run add -- my-card --paste MyCard.vue      # writes whatever is on the clipboard into items/my-card/MyCard.vue
+```
+Or just drop a folder into `items/` and run `npm run build`. Or paste the component in a Claude chat and say "add to the library".
+
+- Language is detected from file extensions (React, Vue, Svelte, HTML, CSS, TS, JS).
+- Add a `demo.tsx` (imports `@/components/ui/<name>`) to get a live preview. HTML items preview themselves.
+- Optional `items/<name>/meta.json`: `title`, `description`, `source`, `tags`, `added`, `preview: false`.
+- Optional `items/<name>/README.md`: shows as "Notes".
+- Categorise later by editing `tags` in `meta.json`. The search box matches tags, language, dependencies.
+
+## Links (sites with assets, components, inspiration)
+The **Links** tab of `index.html` shows `links.json`: each saved site with a note and a category.
+```bash
+npm run link -- https://example.com --note "why it is useful" --cat Inspiration
+npm run link -- --paste            # every URL on the clipboard, whole lists work ("url - note" lines too)
+```
+Re-adding a URL updates it, never duplicates. Anything added without `--cat` lands in **Unsorted**. To re-categorise, change `cat` in `links.json` (any text becomes a category) and run `npm run build`.
+
+## Save to GitHub
+```bash
+npm run sync      # rebuild, commit, push
+```
+Preview dependencies (react, framer-motion) are in package.json; run `npm install` once on a new machine.
+Previews are built into index.html at build time from each item's `demo.tsx`; add any npm package a demo needs with `npm install <pkg>`. Items without a `demo.tsx` (code from other projects that needs their own app) show code only.
+
+## Hosting (Vercel)
+`vercel.json` serves the committed `index.html` as a static site (no install, no build step). `npm run sync` rebuilds `index.html`, so a push redeploys it. A hosted URL is public unless Vercel Authentication/password protection is on for the project.
+
+---
+
+# Assets CDN (the Assets tab, `gallery.html`)
+
+## asset.archive
 
 A personal CDN for your images, video, and other static assets — hosted free on **GitHub** + **jsDelivr**, with a built-in gallery UI to browse and copy URLs.
 

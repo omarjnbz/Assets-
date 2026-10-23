@@ -1,0 +1,11 @@
+{
+  "title": "Hero Section",
+  "source": "Omar",
+  "description": "Amaterasu hero: HeroCanvas plus mouse parallax and GSAP ScrollTrigger entrance. Needs gsap, lucide-react.",
+  "tags": [
+    "hero",
+    "gsap",
+    "scroll"
+  ],
+  "added": "2026-10-09"
+}

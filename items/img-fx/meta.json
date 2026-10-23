@@ -1,0 +1,11 @@
+{
+  "title": "Image FX",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "A loader that becomes the image: a WebGL pixel mosaic that settles into the picture. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "image",
+    "webgl",
+    "loader"
+  ],
+  "added": "2026-10-09"
+}

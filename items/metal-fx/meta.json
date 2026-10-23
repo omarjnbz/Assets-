@@ -1,0 +1,11 @@
+{
+  "title": "Metal FX",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "Liquid metal for buttons, icons, text and badges, with reflections and cursor light. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "metal",
+    "webgl",
+    "effect"
+  ],
+  "added": "2026-10-09"
+}

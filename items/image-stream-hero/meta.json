@@ -1,0 +1,10 @@
+{
+  "title": "Image Stream Hero",
+  "source": "21st.dev",
+  "description": "Hero with a stream of images. Needs a lib/utils cn helper.",
+  "tags": [
+    "hero",
+    "images"
+  ],
+  "added": "2026-10-09"
+}

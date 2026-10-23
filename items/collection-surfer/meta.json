@@ -1,0 +1,11 @@
+{
+  "title": "Collection Surfer",
+  "source": "21st.dev",
+  "added": "2026-10-09",
+  "description": "Scroll-driven 3D diagonal strip of image cards that loops forever. Hover pulls the nearest card forward (magnetic) or lifts it (uplift).",
+  "tags": [
+    "scroll",
+    "3d",
+    "gallery"
+  ]
+}

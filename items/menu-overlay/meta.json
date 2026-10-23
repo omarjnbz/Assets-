@@ -1,0 +1,11 @@
+{
+  "title": "Menu Overlay",
+  "source": "Omar",
+  "description": "Full-screen navigation overlay animated with GSAP. Uses react-router-dom Link.",
+  "tags": [
+    "nav",
+    "gsap",
+    "overlay"
+  ],
+  "added": "2026-10-09"
+}

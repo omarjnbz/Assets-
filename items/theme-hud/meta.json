@@ -1,0 +1,11 @@
+{
+  "title": "Theme HUD",
+  "source": "KAS5H",
+  "description": "Theme switcher with Web Audio mechanical click sounds and a flash transition between themes.",
+  "tags": [
+    "theme",
+    "audio",
+    "ui"
+  ],
+  "added": "2026-10-09"
+}

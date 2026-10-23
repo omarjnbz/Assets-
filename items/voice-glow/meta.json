@@ -1,0 +1,11 @@
+{
+  "title": "Voice Glow",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "A glow that rises with your voice from the bottom of a chat input or phone screen. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "voice",
+    "ai",
+    "glow"
+  ],
+  "added": "2026-10-09"
+}

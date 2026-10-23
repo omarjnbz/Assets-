@@ -1,0 +1,12 @@
+{
+  "title": "Coverflow Gallery",
+  "source": "Omar",
+  "description": "The portfolio's coverflow gallery section as one standalone HTML file. Image paths point at ../Omar/img so preview needs the images next to it.",
+  "tags": [
+    "gallery",
+    "portfolio",
+    "3d"
+  ],
+  "added": "2026-10-09",
+  "preview": false
+}

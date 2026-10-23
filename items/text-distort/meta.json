@@ -1,0 +1,11 @@
+{
+  "title": "Text Distort",
+  "source": "KAS5H",
+  "description": "Per-character text effect: SVG displacement filter animated with GSAP, plus a matrix-style scrambler.",
+  "tags": [
+    "text",
+    "gsap",
+    "svg-filter"
+  ],
+  "added": "2026-10-09"
+}

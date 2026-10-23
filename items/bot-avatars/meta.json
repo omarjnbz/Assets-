@@ -1,0 +1,10 @@
+{
+  "title": "Bot Avatars",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "Animated bot avatars with living faces: eighteen glossy shapes, four states, for AI agents. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "avatar",
+    "ai"
+  ],
+  "added": "2026-10-09"
+}

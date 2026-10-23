@@ -1,0 +1,29 @@
+{
+  "name": "component-library",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "open": "node build.js && open index.html",
+    "add": "node add.js",
+    "link": "node link.js",
+    "sync": "node build.js && git add -A && git commit -m \"Update library\" && git push"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.4.0",
+    "border-beam": "^1.4.1",
+    "bot-avatars": "^0.2.2",
+    "class-variance-authority": "^0.7.1",
+    "framer-motion": "^11.18.0",
+    "img-fx": "^0.5.1",
+    "liquid-gooey": "^0.2.2",
+    "lucide-react": "^1.54.0",
+    "metal-fx": "^2.0.11",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "thinking-orbs": "^0.3.2",
+    "voice-glow": "^0.3.0"
+  }
+}

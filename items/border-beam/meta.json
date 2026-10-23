@@ -1,0 +1,11 @@
+{
+  "title": "Border Beam",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "A soft glow that rides the border of a card, button or input. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "border",
+    "glow",
+    "effect"
+  ],
+  "added": "2026-10-09"
+}

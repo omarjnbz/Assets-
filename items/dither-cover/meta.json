@@ -1,0 +1,11 @@
+{
+  "title": "Dither Cover",
+  "source": "Omar",
+  "description": "Canvas Bayer-dither cover art that reads the theme colour. Shares dither.ts with Idle Dither (batchcamp).",
+  "tags": [
+    "canvas",
+    "dither",
+    "image"
+  ],
+  "added": "2026-10-09"
+}

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Component library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Martian+Mono:wght@400&display=swap">
+<style>
+:root{
+  --ink:#080807; --card:#111110; --line:#26241f;
+  --sand:#e8e8e3; --dim:#8b857c; --ghost:#3b3833; --olive:#aaaa8e;
+  --f:"Archivo",sans-serif; --m:"Martian Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--sand);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.mono{font-family:var(--m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase}
+
+/* page */
+.page{max-width:1240px;margin:0 auto;padding:clamp(2rem,6vw,5rem) clamp(1rem,4vw,3rem)}
+header{padding-bottom:2.5rem;border-bottom:1px solid var(--line);margin-bottom:2.5rem}
+header h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:900;letter-spacing:-.04em;line-height:1;margin:.9rem 0 1rem}
+header p{color:var(--dim);max-width:52ch}
+.index{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem 2rem;margin-top:2rem}
+.index a{display:flex;gap:.8rem;padding:.5rem 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--dim);font-size:.9rem}
+.index a:hover{color:var(--sand)}
+.index a span{color:var(--ghost);font-family:var(--m);font-size:.6rem;padding-top:.35em}
+
+/* grid of components */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.5rem}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.item.wide{grid-column:1 / -1}
+.head{display:flex;justify-content:space-between;align-items:baseline;padding:1.1rem 1.25rem .9rem}
+.head h2{font-size:1.1rem;font-weight:700;letter-spacing:-.02em}
+.head .mono{color:var(--ghost)}
+.desc{padding:0 1.25rem 1rem;color:var(--dim);font-size:.9rem}
+.stage{position:relative;height:300px;margin:0 1.25rem 1.25rem;border-radius:10px;overflow:hidden;background:var(--ink);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;isolation:isolate}
+.wide .stage{height:360px}
+.ctrl{display:flex;align-items:center;gap:.8rem;padding:0 1.25rem 1.25rem;color:var(--dim);font-size:.8rem}
+.ctrl input{flex:1;accent-color:var(--olive)}
+
+/* 01 aurora */
+.aurora{position:absolute;inset:-10%;filter:blur(50px);opacity:.5;
+  background:repeating-linear-gradient(100deg,#3b82f6 10%,#a5b4fc 15%,#93c5fd 20%,#ddd6fe 25%,#60a5fa 30%);
+  background-size:300% 200%;animation:aurora 24s linear infinite;
+  mask-image:radial-gradient(ellipse at 100% 0%,#000 10%,transparent 70%)}
+@keyframes aurora{to{background-position:350% 50%}}
+.big{position:relative;font-size:2rem;font-weight:900;letter-spacing:-.04em;text-align:center}
+
+/* 02 spotlight */
+.spot{position:absolute;inset:0;background:radial-gradient(circle at var(--x,30%) var(--y,30%),rgba(232,232,227,.16),transparent 38%);transition:background .1s}
+.spot-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:36px 36px;opacity:.5}
+
+/* 03 sparkles */
+.sparkles canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* 04 cover */
+.cover{position:relative;display:inline-block;padding:0 .2em;border-radius:6px;cursor:default}
+.cover::before,.cover::after{content:"";position:absolute;width:6px;height:6px;border:1px solid var(--sand);opacity:.5}
+.cover::before{top:-3px;left:-3px}.cover::after{bottom:-3px;right:-3px}
+.cover:hover{background:#ffffff10;animation:shake .25s linear infinite}
+.cover i{position:absolute;left:0;height:1px;width:40%;opacity:0;background:linear-gradient(90deg,transparent,#93c5fd,transparent)}
+.cover:hover i{opacity:1;animation:streak .7s linear infinite}
+@keyframes streak{from{transform:translateX(-100%)}to{transform:translateX(300%)}}
+@keyframes shake{25%{transform:translate(1px,-1px)}50%{transform:translate(-1px,1px)}75%{transform:translate(1px,1px)}}
+
+/* 05 flip words */
+.flip{display:inline-block;color:var(--olive);text-align:left;min-width:5ch}
+.flip span{display:inline-block;opacity:0;filter:blur(8px);transform:translateY(10px);animation:in .5s forwards}
+.flip.out{animation:out .4s forwards}
+@keyframes in{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes out{to{opacity:0;filter:blur(8px);transform:translate(30px,-30px) scale(1.5)}}
+
+/* 06 text generate */
+.gen{font-size:1.35rem;font-weight:500;line-height:1.35;max-width:26ch;text-align:center;padding:0 1.5rem}
+.gen span{opacity:0;filter:blur(10px);transition:opacity .6s,filter .6s}
+.gen.on span{opacity:1;filter:blur(0)}
+
+/* 07 gemini */
+.gem{position:absolute;inset:0;width:100%;height:100%}
+.gem path{fill:none;stroke-width:2;stroke-linecap:round}
+
+/* 08 moving cards */
+.marquee{width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.track{display:flex;gap:14px;width:max-content;animation:scroll 32s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.q{width:280px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:.9rem}
+.q b{display:block;margin-top:12px;font-weight:500;font-size:.8rem}
+.q small{color:var(--dim);font-size:.72rem}
+@keyframes scroll{to{transform:translateX(calc(-50% - 7px))}}
+
+/* 09 macbook scroll */
+.mac{perspective:1200px;display:flex;flex-direction:column;align-items:center}
+.lid{width:320px;height:200px;border-radius:12px 12px 4px 4px;background:#1a1917;border:2px solid #2c2a26;
+  transform-origin:bottom;transform:rotateX(calc(80deg * (1 - var(--p,0))));transition:transform .1s linear;overflow:hidden}
+.lid div{position:absolute;inset:8px;border-radius:6px;background:linear-gradient(135deg,#8c8c73,#2a2823);opacity:var(--p,0)}
+.base{width:360px;height:14px;border-radius:0 0 14px 14px;background:#2c2a26;margin-top:-2px}
+
+/* 10 border beam */
+.beam{position:relative;width:300px;padding:28px;border-radius:16px;border:1px solid var(--line);background:var(--card);overflow:hidden}
+.beam::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;
+  background:conic-gradient(from var(--a),transparent 0 80%,#ffaa40 88%,#9c40ff 95%,transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:spin 6s linear infinite}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+
+/* 11 shimmer button */
+.shim{position:relative;overflow:hidden;border:1px solid #333;border-radius:999px;padding:14px 30px;background:#141412;color:var(--sand);font:500 .9rem var(--f);cursor:pointer}
+.shim::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,#ffffff2e 50%,transparent 65%);animation:sh 2.4s infinite}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <p class="mono" style="color:var(--olive)">Reference</p>
+  <h1>Component library</h1>
+  <p>The motion components used in the noteX project, rebuilt in plain HTML, CSS and JS. One card each. Hover, scroll or use the slider where it says so.</p>
+  <nav class="index">
+    <a href="#c1"><span>01</span>Aurora background</a>
+    <a href="#c2"><span>02</span>Spotlight</a>
+    <a href="#c3"><span>03</span>Sparkles</a>
+    <a href="#c4"><span>04</span>Cover</a>
+    <a href="#c5"><span>05</span>Flip words</a>
+    <a href="#c6"><span>06</span>Text generate</a>
+    <a href="#c7"><span>07</span>Gemini lines</a>
+    <a href="#c8"><span>08</span>Moving cards</a>
+    <a href="#c9"><span>09</span>Macbook scroll</a>
+    <a href="#c10"><span>10</span>Border beam</a>
+    <a href="#c11"><span>11</span>Shimmer button</a>
+  </nav>
+</header>
+
+<div class="grid">
+
+  <section class="item" id="c1">
+    <div class="head"><h2>Aurora background</h2><span class="mono">01 · Aceternity</span></div>
+    <p class="desc">Soft moving gradient behind a hero. Runs on its own.</p>
+    <div class="stage"><div class="aurora"></div><p class="big">Hero text here</p></div>
+  </section>
+
+  <section class="item" id="c2">
+    <div class="head"><h2>Spotlight</h2><span class="mono">02 · Aceternity</span></div>
+    <p class="desc">A light that follows the mouse. Move over the box.</p>
+    <div class="stage" data-spot><div class="spot-grid"></div><div class="spot"></div><p class="big">Move the mouse</p></div>
+  </section>
+
+  <section class="item" id="c3">
+    <div class="head"><h2>Sparkles</h2><span class="mono">03 · Aceternity</span></div>
+    <p class="desc">Small particles that drift and twinkle. Runs on its own.</p>
+    <div class="stage sparkles"><canvas data-sparkles></canvas><p class="big">Sparkles</p></div>
+  </section>
+
+  <section class="item" id="c4">
+    <div class="head"><h2>Cover</h2><span class="mono">04 · Aceternity</span></div>
+    <p class="desc">One word in a headline reacts on hover. Hover the word.</p>
+    <div class="stage"><p class="big">Notes that <span class="cover">think<i style="top:30%"></i><i style="top:60%;animation-delay:.3s"></i><i style="top:85%;animation-delay:.15s"></i></span></p></div>
+  </section>
+
+  <section class="item" id="c5">
+    <div class="head"><h2>Flip words</h2><span class="mono">05 · Aceternity</span></div>
+    <p class="desc">Cycles through a list of words. Runs on its own.</p>
+    <div class="stage"><p class="big">Build <span class="flip" data-flip></span></p></div>
+  </section>
+
+  <section class="item" id="c6">
+    <div class="head"><h2>Text generate</h2><span class="mono">06 · Aceternity</span></div>
+    <p class="desc">Text appears word by word. Plays when it comes into view; press replay to see it again.</p>
+    <div class="stage"><p class="gen" data-gen>Your notes, summarized, tagged and translated before you finish your coffee.</p></div>
+    <div class="ctrl"><button class="shim" data-replay style="padding:8px 18px;font-size:.8rem">Replay</button></div>
+  </section>
+
+  <section class="item wide" id="c7">
+    <div class="head"><h2>Gemini lines</h2><span class="mono">07 · Aceternity</span></div>
+    <p class="desc">Lines draw in as a value goes from 0 to 100. On a real page the value is scroll progress. Here it is the slider.</p>
+    <div class="stage">
+      <svg class="gem" viewBox="0 340 1440 340" preserveAspectRatio="none" data-gem>
+        <path stroke="#FFB7C5" d="M0 663C145.5 663 191 666.265 269 647C326.5 630 339.5 621 397.5 566C439 531.5 455 529.5 490 523C509.664 519.348 521 503.736 538 504.236C553.591 504.236 562.429 514.739 584.66 522.749C592.042 525.408 600.2 526.237 607.356 523.019C624.755 515.195 641.446 496.324 657 496.735C673.408 496.735 693.545 519.572 712.903 526.769C718.727 528.934 725.184 528.395 730.902 525.965C751.726 517.115 764.085 497.106 782 496.735C794.831 496.47 804.103 508.859 822.469 518.515C835.13 525.171 850.214 526.815 862.827 520.069C875.952 513.049 889.748 502.706 903.5 503.736C922.677 505.171 935.293 510.562 945.817 515.673C954.234 519.76 963.095 522.792 972.199 524.954C996.012 530.611 1007.42 534.118 1034 549C1077.5 573.359 1082.5 594.5 1140 629C1206 670 1328.5 662.5 1440 662.5"/>
+        <path stroke="#FFDDB7" d="M0 587.5C147 587.5 277 587.5 310 573.5C348 563 392.5 543.5 408 535C434 523.5 426 526.235 479 515.235C494 512.729 523 510.435 534.5 512.735C554.5 516.735 555.5 523.235 576 523.735C592 523.735 616 496.735 633 497.235C648.671 497.235 661.31 515.052 684.774 524.942C692.004 527.989 700.2 528.738 707.349 525.505C724.886 517.575 741.932 498.33 757.5 498.742C773.864 498.742 791.711 520.623 810.403 527.654C816.218 529.841 822.661 529.246 828.451 526.991C849.246 518.893 861.599 502.112 879.5 501.742C886.47 501.597 896.865 506.047 907.429 510.911C930.879 521.707 957.139 519.639 982.951 520.063C1020.91 520.686 1037.5 530.797 1056.5 537C1102.24 556.627 1116.5 570.704 1180.5 579.235C1257.5 589.5 1279 587 1440 588"/>
+        <path stroke="#B1C5FF" d="M0 514C147.5 514.333 294.5 513.735 380.5 513.735C405.976 514.94 422.849 515.228 436.37 515.123C477.503 514.803 518.631 506.605 559.508 511.197C564.04 511.706 569.162 512.524 575 513.735C588 516.433 616 521.702 627.5 519.402C647.5 515.402 659 499.235 680.5 499.235C700.5 499.235 725 529.235 742 528.735C757.654 528.735 768.77 510.583 791.793 500.59C798.991 497.465 807.16 496.777 814.423 499.745C832.335 507.064 850.418 524.648 866 524.235C882.791 524.235 902.316 509.786 921.814 505.392C926.856 504.255 932.097 504.674 937.176 505.631C966.993 511.248 970.679 514.346 989.5 514.735C1006.3 515.083 1036.5 513.235 1055.5 513.235C1114.5 513.235 1090.5 513.235 1124 513.235C1177.5 513.235 1178.99 514.402 1241 514.402C1317.5 514.402 1274.5 512.568 1440 513.235"/>
+        <path stroke="#4FABFF" d="M0 438.5C150.5 438.5 261 438.318 323.5 456.5C351 464.5 387.517 484.001 423.5 494.5C447.371 501.465 472 503.735 487 507.735C503.786 512.212 504.5 516.808 523 518.735C547 521.235 564.814 501.235 584.5 501.235C604.5 501.235 626 529.069 643 528.569C658.676 528.569 672.076 511.63 695.751 501.972C703.017 499.008 711.231 498.208 718.298 501.617C735.448 509.889 751.454 529.98 767 529.569C783.364 529.569 801.211 507.687 819.903 500.657C825.718 498.469 832.141 499.104 837.992 501.194C859.178 508.764 873.089 523.365 891 523.735C907.8 524.083 923 504.235 963 506.735C1034.5 506.735 1047.5 492.68 1071 481.5C1122.5 457 1142.23 452.871 1185 446.5C1255.5 436 1294 439 1439.5 439"/>
+        <path stroke="#076EFF" d="M0.5 364C145.288 362.349 195 361.5 265.5 378C322 391.223 399.182 457.5 411 467.5C424.176 478.649 456.916 491.677 496.259 502.699C498.746 503.396 501.16 504.304 503.511 505.374C517.104 511.558 541.149 520.911 551.5 521.236C571.5 521.236 590 498.736 611.5 498.736C631.5 498.736 652.5 529.236 669.5 528.736C685.171 528.736 697.81 510.924 721.274 501.036C728.505 497.988 736.716 497.231 743.812 500.579C761.362 508.857 778.421 529.148 794 528.736C810.375 528.736 829.35 508.68 848.364 502.179C854.243 500.169 860.624 500.802 866.535 502.718C886.961 509.338 898.141 519.866 916 520.236C932.8 520.583 934.5 510.236 967.5 501.736C1011.5 491 1007.5 493.5 1029.5 480C1069.5 453.5 1072 440.442 1128.5 403.5C1180.5 369.5 1275 360.374 1439 364"/>
+      </svg>
+    </div>
+    <div class="ctrl"><span>Progress</span><input type="range" min="0" max="100" value="35" data-gem-range><span data-gem-out>35%</span></div>
+  </section>
+
+  <section class="item wide" id="c8">
+    <div class="head"><h2>Moving cards</h2><span class="mono">08 · Aceternity</span></div>
+    <p class="desc">An endless strip of cards. Hover to pause.</p>
+    <div class="stage" style="height:220px"><div class="marquee"><div class="track" data-track></div></div></div>
+  </section>
+
+  <section class="item" id="c9">
+    <div class="head"><h2>Macbook scroll</h2><span class="mono">09 · Aceternity</span></div>
+    <p class="desc">A laptop lid opens as the card scrolls up the page. Scroll slowly past it.</p>
+    <div class="stage"><div class="mac" data-mac><div class="lid"><div></div></div><div class="base"></div></div></div>
+  </section>
+
+  <section class="item" id="c10">
+    <div class="head"><h2>Border beam</h2><span class="mono">10 · Magic UI</span></div>
+    <p class="desc">A light travels around the edge of a card. Runs on its own.</p>
+    <div class="stage"><div class="beam"><b>Card title</b><p style="color:var(--dim);font-size:.85rem;margin-top:6px">The beam runs along the border.</p></div></div>
+  </section>
+
+  <section class="item" id="c11">
+    <div class="head"><h2>Shimmer button</h2><span class="mono">11 · Magic UI</span></div>
+    <p class="desc">A light sweeps across a button. Runs on its own.</p>
+    <div class="stage"><button class="shim">Start writing</button></div>
+  </section>
+
+</div>
+</div>
+
+<script>
+(function(){
+  // 02 spotlight
+  var s=document.querySelector("[data-spot]"),sp=s.querySelector(".spot");
+  s.addEventListener("pointermove",function(e){var r=s.getBoundingClientRect();
+    sp.style.setProperty("--x",(e.clientX-r.left)/r.width*100+"%");sp.style.setProperty("--y",(e.clientY-r.top)/r.height*100+"%")});
+
+  // 03 sparkles
+  var cv=document.querySelector("[data-sparkles]"),cx=cv.getContext("2d"),pts=[];
+  function size(){cv.width=cv.clientWidth;cv.height=cv.clientHeight}
+  size();addEventListener("resize",size);
+  for(var i=0;i<90;i++)pts.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.3,v:Math.random()*.0006+.0002,t:Math.random()*6.28});
+  (function tick(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(function(p){p.y-=p.v;if(p.y<0)p.y=1;p.t+=.05;
+    cx.globalAlpha=.4+.6*Math.abs(Math.sin(p.t));cx.fillStyle="#e8e8e3";cx.beginPath();cx.arc(p.x*cv.width,p.y*cv.height,p.r,0,6.28);cx.fill()});
+    requestAnimationFrame(tick)})();
+
+  // 05 flip words
+  var words=["websites","admin panels","voice agents","CRMs"],w=0,flip=document.querySelector("[data-flip]");
+  function show(){flip.classList.remove("out");flip.innerHTML=words[w].split("").map(function(c,i){return'<span style="animation-delay:'+i*.04+'s">'+(c===" "?"&nbsp;":c)+"</span>"}).join("")}
+  show();setInterval(function(){flip.classList.add("out");setTimeout(function(){w=(w+1)%words.length;show()},400)},2600);
+
+  // 06 text generate
+  var g=document.querySelector("[data-gen]");
+  g.innerHTML=g.textContent.trim().split(" ").map(function(x,i){return'<span style="transition-delay:'+i*.08+'s">'+x+"</span>"}).join(" ");
+  new IntersectionObserver(function(e){if(e[0].isIntersecting)g.classList.add("on")},{threshold:.5}).observe(g);
+  document.querySelector("[data-replay]").addEventListener("click",function(){g.classList.remove("on");void g.offsetWidth;g.classList.add("on")});
+
+  // 07 gemini lines
+  var paths=[].slice.call(document.querySelectorAll("[data-gem] path")),rg=document.querySelector("[data-gem-range]"),out=document.querySelector("[data-gem-out]");
+  paths.forEach(function(p){var L=p.getTotalLength();p.dataset.l=L;p.style.strokeDasharray=L});
+  function draw(){var t=rg.value/100;out.textContent=rg.value+"%";
+    paths.forEach(function(p,i){var k=Math.min(1,t*(1.1+i*.12));p.style.strokeDashoffset=p.dataset.l*(1-k)})}
+  rg.addEventListener("input",draw);draw();
+
+  // 08 moving cards
+  var q=[["Turned my lecture mess into clean outlines.","Lina K.","Student"],["The summaries are very good. I stopped re-reading.","Daniel O.","Product manager"],["Tags itself. I never organise anything now.","Sara M.","Designer"],["Translation inside my notes is the best part.","Yusuf A.","Founder"],["Text-to-speech on my commute. Perfect.","Priya R.","Engineer"]];
+  var html=q.map(function(c){return'<div class="q">'+c[0]+"<b>"+c[1]+"</b><small>"+c[2]+"</small></div>"}).join("");
+  document.querySelector("[data-track]").innerHTML=html+html;
+
+  // 09 macbook: lid opens as the stage rises through the viewport
+  var mac=document.querySelector("[data-mac]");
+  function lid(){var r=mac.getBoundingClientRect(),p=1-(r.top-innerHeight*.15)/(innerHeight*.6);
+    mac.style.setProperty("--p",Math.min(1,Math.max(0,p)).toFixed(3))}
+  addEventListener("scroll",lid,{passive:true});lid();
+})();
+</script>
+</body>
+</html>

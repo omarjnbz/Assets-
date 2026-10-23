@@ -1,0 +1,11 @@
+{
+  "title": "Motion Components (11)",
+  "source": "Aceternity / Magic UI",
+  "description": "Eleven motion components rebuilt in plain HTML/CSS/JS: aurora, spotlight, sparkles, cover, flip words, text generate, gemini lines, moving cards, macbook scroll, border beam, shimmer button. Split into separate entries later.",
+  "tags": [
+    "bundle",
+    "animation",
+    "vanilla"
+  ],
+  "added": "2026-10-09"
+}

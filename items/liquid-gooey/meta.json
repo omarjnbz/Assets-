@@ -1,0 +1,11 @@
+{
+  "title": "Gooey (liquid-gooey)",
+  "source": "Libraries.dev (Jakub Antalik) \u00b7 MIT",
+  "description": "Pieces that merge like goo and morph like jelly while text stays crisp. Installs from npm; the code here is a usage demo, not the library source.",
+  "tags": [
+    "gooey",
+    "effect",
+    "svg"
+  ],
+  "added": "2026-10-09"
+}

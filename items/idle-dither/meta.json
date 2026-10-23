@@ -1,0 +1,11 @@
+{
+  "title": "Idle Dither",
+  "source": "Omar",
+  "description": "Animated Bayer-dither idle state on canvas. Shares dither.ts with Dither Cover (batchcamp).",
+  "tags": [
+    "canvas",
+    "dither",
+    "animation"
+  ],
+  "added": "2026-10-09"
+}

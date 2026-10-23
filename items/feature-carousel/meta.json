@@ -1,0 +1,10 @@
+{
+  "title": "Feature Carousel",
+  "source": "21st.dev",
+  "description": "Hero section with a feature carousel. Needs the shadcn Button (included), lucide-react, @radix-ui/react-slot, class-variance-authority, and lib/utils cn.",
+  "tags": [
+    "carousel",
+    "hero"
+  ],
+  "added": "2026-10-09"
+}
